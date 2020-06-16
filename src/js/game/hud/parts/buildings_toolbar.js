@@ -110,14 +110,27 @@ export class HUDBuildingsToolbar extends BaseHUDPart {
 
     cycleBuildings() {
         let newIndex = this.lastSelectedIndex;
-        for (let i = 0; i < toolbarBuildings.length; ++i, ++newIndex) {
-            newIndex %= toolbarBuildings.length;
-            const metaBuilding = gMetaBuildingRegistry.findByClass(toolbarBuildings[newIndex]);
-            const handle = this.buildingHandles[metaBuilding.id];
-            if (!handle.selected && handle.unlocked) {
-                break;
+
+        if (this.root.keyMapper.getBinding(KEYMAPPINGS.placement.reverseCycleBuilding).isCurrentlyPressed()) {
+            for (let i = toolbarBuildings.length + 1; i > 0; --i, --newIndex) {
+                newIndex = newIndex < 0 ? toolbarBuildings.length - 1 : newIndex;
+                const metaBuilding = gMetaBuildingRegistry.findByClass(toolbarBuildings[newIndex]);
+                const handle = this.buildingHandles[metaBuilding.id];
+                if (!handle.selected && handle.unlocked) {
+                    break;
+                }
+            }
+        } else {
+            for (let i = 0; i < toolbarBuildings.length; ++i, ++newIndex) {
+                newIndex %= toolbarBuildings.length;
+                const metaBuilding = gMetaBuildingRegistry.findByClass(toolbarBuildings[newIndex]);
+                const handle = this.buildingHandles[metaBuilding.id];
+                if (!handle.selected && handle.unlocked) {
+                    break;
+                }
             }
         }
+
         const metaBuildingClass = toolbarBuildings[newIndex];
         const metaBuilding = gMetaBuildingRegistry.findByClass(metaBuildingClass);
         this.selectBuildingForPlacement(metaBuilding);
